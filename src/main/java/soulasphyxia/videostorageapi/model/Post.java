@@ -1,5 +1,6 @@
 package soulasphyxia.videostorageapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +29,11 @@ public class Post {
     @Column(name = "created_at")
     private Date createdAt;
 
-
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "data_id", referencedColumnName = "id")
-    private PostFile videoFile;
+    private PostFile postFile;
+
+    private String data;
 
 }

@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import soulasphyxia.videostorageapi.PostService;
 import soulasphyxia.videostorageapi.model.Post;
-import soulasphyxia.videostorageapi.model.PostDTO;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/v1/")
@@ -20,34 +20,44 @@ import java.io.IOException;
 @CrossOrigin("*")
 public class PostController {
 
-    private final PostService crudService;
+    private final PostService postService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadPost(@RequestParam("data") MultipartFile file,
                                         @RequestParam("title") String title,
                                         @RequestParam("content") String content) throws IOException {
-        String uploadPostResult = crudService.uploadPost(file,title,content);
+        String uploadPostResult = postService.uploadPost(file,title,content);
         return ResponseEntity.ok().body(uploadPostResult);
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/posts/{id}")
 
     public ResponseEntity<?> getById(@PathVariable Long id){
-        PostDTO postDTO = crudService.getById(id);
-        return ResponseEntity.ok().body(postDTO);
+        Post post = postService.getById(id);
+        return ResponseEntity.ok().body(post);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<?> getAll(){
+        List<Post> posts = postService.getAll();
+        return ResponseEntity.ok().body(posts);
     }
 
 
-    @PatchMapping("/patch")
-    public Post patchPost(){
-        return new Post();
+    @PatchMapping("/patch/{id}")
+    public ResponseEntity<?> patchPost(@PathVariable Long id,
+                          @RequestParam String title,
+                          @RequestParam String content){
+        String actionResult = postService.patchPost(id,title,content);
+        return ResponseEntity.ok().body(actionResult);
     }
 
 
-    @DeleteMapping("/delete")
-    public Post deletePost(){
-        return new Post();
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id){
+        String actionResult = postService.deletePost(id);
+        return ResponseEntity.ok().body(actionResult);
     }
 
 

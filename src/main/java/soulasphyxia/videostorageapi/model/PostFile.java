@@ -28,5 +28,4 @@ public class PostFile {
 
     @Column(name = "filename")
     private String filename;
-
 }
