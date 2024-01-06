@@ -38,7 +38,7 @@ public class PostService {
                 .title(title)
                 .createdAt(new Date())
                 .postFile(postFile)
-                .data(String.format("http://31.129.44.37:8080/api/v1/files/%s",postFile.getFilename()))
+                .data(String.format("https://video-storage-api-production.up.railway.app/api/v1/files/%s",postFile.getFilename()))
                 .build();
 
         fileRepository.save(postFile);
