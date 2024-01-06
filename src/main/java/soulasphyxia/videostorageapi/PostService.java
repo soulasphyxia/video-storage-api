@@ -2,6 +2,9 @@ package soulasphyxia.videostorageapi;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import soulasphyxia.videostorageapi.model.PostFile;
@@ -35,7 +38,7 @@ public class PostService {
                 .title(title)
                 .createdAt(new Date())
                 .postFile(postFile)
-                .data(String.format("http://localhost:8080/api/v1/files/%s",postFile.getFilename()))
+                .data(String.format("http://31.129.44.37:8080/api/v1/files/%s",postFile.getFilename()))
                 .build();
 
         fileRepository.save(postFile);
@@ -44,8 +47,8 @@ public class PostService {
         return "Post uploaded successfully";
     }
 
-    public List<Post> getAll(){
-        return postRepository.findAll();
+    public Page<Post> getAll(Integer page){
+        return postRepository.findAll(PageRequest.of(page,10));
     }
 
     public Post getById(Long id){

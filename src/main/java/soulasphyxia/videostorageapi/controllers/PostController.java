@@ -3,6 +3,7 @@ package soulasphyxia.videostorageapi.controllers;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +40,8 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public ResponseEntity<?> getAll(){
-        List<Post> posts = postService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(name = "page", defaultValue = "0") Integer page){
+        Page<Post> posts = postService.getAll(page);
         return ResponseEntity.ok().body(posts);
     }
 
@@ -59,8 +60,5 @@ public class PostController {
         String actionResult = postService.deletePost(id);
         return ResponseEntity.ok().body(actionResult);
     }
-
-
-
 
 }
