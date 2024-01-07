@@ -60,28 +60,28 @@ public class PostService {
 
 
 
-    public String deletePost(Long id){
+    public Post deletePost(Long id){
         Post post = postRepository.findById(id).orElse(null);
         if(post != null){
             String filename = post.getMediaFilePath().replace("https://45b92c47-7474-4880-80e3-ef8b5ab159e3.selstorage.ru/", "");
             s3Repository.deleteFile(filename);
             postRepository.deleteById(id);
-            return "Post deleted successfully";
+            return post;
         }
-        return "Error with deleting post";
+        return null;
     }
 
-    public String patchPost(Long id, String title, String content){
+    public Post patchPost(Long id, String title, String content){
         Post post = postRepository.findById(id).orElse(null);
         if(post != null){
             post.setTitle(title);
             post.setContent(content);
             postRepository.save(post);
 
-            return "Post patched successfully";
+            return post;
         }
 
-        return "Error";
+        return null;
     }
 
     private String getFileDownloadLink(String filename){
