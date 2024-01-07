@@ -24,16 +24,14 @@ public class Post {
 
     @Column(name = "title")
     private String title;
+
     @Column(name = "content")
     private String content;
+
     @Column(name = "created_at")
     private Date createdAt;
 
-    @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "data_id", referencedColumnName = "id")
-    private PostFile postFile;
-
-    private String data;
+    @Column(name="file_path")
+    private String mediaFilePath;
 
 }
