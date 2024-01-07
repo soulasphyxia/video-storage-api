@@ -16,7 +16,7 @@ import java.io.IOException;
 @RequestMapping("/api/v1/dashboard")
 @Log4j2
 @AllArgsConstructor
-@CrossOrigin("*")
+@CrossOrigin
 public class DashboardController {
 
     private final PostService postService;

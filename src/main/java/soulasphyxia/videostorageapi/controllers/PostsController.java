@@ -10,7 +10,7 @@ import soulasphyxia.videostorageapi.services.PostService;
 
 @RestController
 @RequestMapping("/api/v1/posts")
-@CrossOrigin("*")
+@CrossOrigin
 @AllArgsConstructor
 
 public class PostsController {
