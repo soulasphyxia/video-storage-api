@@ -1,4 +1,4 @@
-package soulasphyxia.videostorageapi;
+package soulasphyxia.videostorageapi.configs;
 
 
 import com.amazonaws.auth.AWSCredentials;
@@ -7,15 +7,23 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class S3ClientConfig {
 
+    @Value("${aws.accessKey}")
+    private String accessKey;
+
+    @Value("${aws.secretKey}")
+    private String secretKey;
+
+
     public AWSCredentials getCredentials(){
-        return new BasicAWSCredentials("50f34d100b194beb93ba54fcca3c784d",
-                "91a4512fc3d94209b36dafb88d3b9928");
+        return new BasicAWSCredentials(accessKey,
+                secretKey);
     }
 
     public AwsClientBuilder.EndpointConfiguration getEndpoint(){
