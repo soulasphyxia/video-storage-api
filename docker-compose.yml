@@ -1,0 +1,67 @@
+version: '3'
+services:
+  backend:
+    image: soulasphyxia/backend:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      db-videostorage:
+        condition: service_started
+      s3filestorage:
+        condition: service_started
+    networks:
+      - video-storage-api_default
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-videostorage/videostorage
+      - SCALITY_ACCESS_KEY_ID=accessKey1
+      - SCALITY_SECRET_ACCESS_KEY=verySecretKey1
+      - S3_URL=http://172.25.0.10:8000
+
+
+  db-videostorage:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: videostorage
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ~/.ssh:/root/.ssh:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - video-storage-api_default
+    restart: unless-stopped
+
+  s3filestorage:
+    image: scality/s3server:latest
+    container_name: s3filestorage
+    privileged: true
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - s3data:/usr/src/app/localData
+      - s3metadata:/usr/src/app/localMetadata
+    environment:
+      - SCALITY_ACCESS_KEY_ID=accessKey1
+      - SCALITY_SECRET_ACCESS_KEY=verySecretKey1
+      - SSL=FALSE
+    networks:
+      video-storage-api_default:
+        ipv4_address: 172.25.0.10
+
+networks:
+  video-storage-api_default:
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+volumes:
+  s3data:
+  s3metadata:
+  db-data:

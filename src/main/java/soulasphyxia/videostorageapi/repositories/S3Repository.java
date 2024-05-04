@@ -1,6 +1,8 @@
 package soulasphyxia.videostorageapi.repositories;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.transfer.ObjectCannedAclProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,19 +18,21 @@ public class S3Repository {
 
     private final AmazonS3 client;
 
-    @Value("${aws.bucket.name}")
-    private String BUCKET_NAME;
+    private String BUCKET_NAME = "bucket";
+
 
     public S3Repository(AmazonS3 client) {
         this.client = client;
+        createBucket();
     }
 
     public String uploadFile(File file) {
 
-        client.putObject(BUCKET_NAME,file.getName(), file);
+        PutObjectRequest request = new PutObjectRequest(BUCKET_NAME, file.getName(), file)
+                .withCannedAcl(CannedAccessControlList.PublicRead);
 
+        client.putObject(request);
         file.delete();
-
         return String.format("File %s uploaded successfully", file.getName());
 
     }
@@ -43,6 +47,10 @@ public class S3Repository {
 
         return String.format("Error with deleting file %s", filename);
 
+    }
+
+    public void createBucket(){
+        client.createBucket(BUCKET_NAME);
     }
 
 }

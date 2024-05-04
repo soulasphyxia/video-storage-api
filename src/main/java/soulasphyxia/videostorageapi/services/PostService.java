@@ -2,6 +2,7 @@ package soulasphyxia.videostorageapi.services;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,17 +12,25 @@ import soulasphyxia.videostorageapi.repositories.PostRepository;
 import soulasphyxia.videostorageapi.repositories.S3Repository;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
 @Service
-@AllArgsConstructor
 public class PostService {
 
     private final PostRepository postRepository;
     private final S3Repository s3Repository;
+    private final String s3URL;
+
+    public PostService(PostRepository postRepository,
+                       S3Repository s3Repository,
+                       @Value("${s3.url}") String s3URL){
+        this.postRepository = postRepository;
+        this.s3Repository = s3Repository;
+        this.s3URL = s3URL;
+
+    }
 
     public String uploadPost(MultipartFile multipartFile, String title, String content) throws IOException {
 
@@ -63,7 +72,8 @@ public class PostService {
     public Post deletePost(Long id){
         Post post = postRepository.findById(id).orElse(null);
         if(post != null){
-            String filename = post.getMediaFilePath().replace("https://45b92c47-7474-4880-80e3-ef8b5ab159e3.selstorage.ru/", "");
+            String filename = post.getMediaFilePath().replace(s3URL +"/bucket/", "");
+            System.out.println(filename);
             s3Repository.deleteFile(filename);
             postRepository.deleteById(id);
             return post;
@@ -85,7 +95,7 @@ public class PostService {
     }
 
     private String getFileDownloadLink(String filename){
-        return String.format("https://45b92c47-7474-4880-80e3-ef8b5ab159e3.selstorage.ru/%s", filename);
+        return String.format(s3URL + "/bucket/%s", filename);
     }
 
     private String generateFilename(String filename, Date date){

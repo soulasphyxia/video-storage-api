@@ -14,11 +14,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class S3ClientConfig {
 
-    @Value("${aws.accessKey}")
+    @Value("${scality.access.key.id}")
     private String accessKey;
 
-    @Value("${aws.secretKey}")
+    @Value("${scality.secret.access.key}")
     private String secretKey;
+
+    @Value("${s3.url}")
+    private String s3Url;
+
+    @Value("${spring.datasource.url}")
+    private String url;
 
 
     public AWSCredentials getCredentials(){
@@ -27,7 +33,9 @@ public class S3ClientConfig {
     }
 
     public AwsClientBuilder.EndpointConfiguration getEndpoint(){
-            return new AwsClientBuilder.EndpointConfiguration("https://s3.storage.selcloud.ru", "ru-1");
+        System.out.println(s3Url);
+        System.out.println(url);
+        return new AwsClientBuilder.EndpointConfiguration(s3Url, "us-west-2");
     }
 
 

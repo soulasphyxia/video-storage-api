@@ -52,6 +52,10 @@
             <artifactId>aws-java-sdk-s3</artifactId>
             <version>1.12.632</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
 
 </dependencies>
 

@@ -35,8 +35,8 @@ public class DashboardController {
 
     @PatchMapping("/patch/{id}")
     public ResponseEntity<?> patchPost(@PathVariable Long id,
-                          @RequestParam String title,
-                          @RequestParam String content){
+                                       @RequestParam String title,
+                                       @RequestParam String content){
         Post patchedPost = postService.patchPost(id,title,content);
         if(patchedPost != null){
             return ResponseEntity.ok().body(patchedPost);
