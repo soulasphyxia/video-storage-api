@@ -30,7 +30,6 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ~/.ssh:/root/.ssh:ro
     ports:
       - "5432:5432"
     networks:

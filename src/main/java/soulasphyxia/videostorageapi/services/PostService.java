@@ -21,14 +21,14 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final S3Repository s3Repository;
-    private final String s3URL;
+    private final String url;
 
     public PostService(PostRepository postRepository,
                        S3Repository s3Repository,
-                       @Value("${s3.url}") String s3URL){
+                       @Value("${url}") String url){
         this.postRepository = postRepository;
         this.s3Repository = s3Repository;
-        this.s3URL = s3URL;
+        this.url = url;
 
     }
 
@@ -72,7 +72,7 @@ public class PostService {
     public Post deletePost(Long id){
         Post post = postRepository.findById(id).orElse(null);
         if(post != null){
-            String filename = post.getMediaFilePath().replace(s3URL +"/bucket/", "");
+            String filename = post.getMediaFilePath().replace(url +"/bucket/", "");
             System.out.println(filename);
             s3Repository.deleteFile(filename);
             postRepository.deleteById(id);
@@ -95,7 +95,7 @@ public class PostService {
     }
 
     private String getFileDownloadLink(String filename){
-        return String.format(s3URL + "/bucket/%s", filename);
+        return String.format(url + "/bucket/%s", filename);
     }
 
     private String generateFilename(String filename, Date date){

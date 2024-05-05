@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import soulasphyxia.videostorageapi.model.dto.MediaFileDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,21 @@ public class S3Repository {
         file.delete();
         return String.format("File %s uploaded successfully", file.getName());
 
+    }
+
+    public MediaFileDTO getFile(String filename){
+        try{
+            S3Object object = client.getObject("bucket", filename);
+            MediaFileDTO mediaFileDTO = MediaFileDTO.builder()
+                    .filename(object.getKey())
+                    .contentType(object.getObjectMetadata().getContentType())
+                    .inputStream(object.getObjectContent())
+                    .build();
+            return mediaFileDTO;
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return null;
     }
 
     public String deleteFile(String filename){
