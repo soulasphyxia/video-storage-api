@@ -38,20 +38,6 @@ public class S3Repository {
 
     }
 
-    public MediaFileDTO getFile(String filename){
-        try{
-            S3Object object = client.getObject("bucket", filename);
-            MediaFileDTO mediaFileDTO = MediaFileDTO.builder()
-                    .filename(object.getKey())
-                    .contentType(object.getObjectMetadata().getContentType())
-                    .inputStream(object.getObjectContent())
-                    .build();
-            return mediaFileDTO;
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
-        return null;
-    }
 
     public String deleteFile(String filename){
         try{
