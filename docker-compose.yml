@@ -25,6 +25,9 @@ services:
   frontend:
     image: soulasphyxia/frontend:0.0.1
     container_name: frontend
+    depends_on:
+      backend:
+        condition: service_started
     restart: always
     ports:
       - "3000:3000"
