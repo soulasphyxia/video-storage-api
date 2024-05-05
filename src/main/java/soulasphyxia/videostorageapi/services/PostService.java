@@ -95,6 +95,7 @@ public class PostService {
     }
 
     private String getFileDownloadLink(String filename){
+        System.out.println(url);
         return String.format(url + "/bucket/%s", filename);
     }
 
