@@ -206,21 +206,5 @@ public class VideoProcessor {
         return tempDir;
     }
 
-    public String getSplit(int height){
-        switch (height){
-            case 1080 -> {
-                return "[0:v]split=3[v1][v2][v3];[v1]copy[v1";
-            }
-            case 720 -> {
-                return "720";
-            }
-            case 360 -> {
-                return "360";
-            }
-            default -> {
-                return "123123";
-            }
-        }
-    }
 
 }

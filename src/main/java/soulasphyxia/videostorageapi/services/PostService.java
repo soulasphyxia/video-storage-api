@@ -56,14 +56,10 @@ public class PostService {
         try(FileOutputStream fileOutputStream = new FileOutputStream(file)){
             fileOutputStream.write(multipartFile.getBytes());
         }
-
+        String bucketName = UUID.randomUUID().toString();
         try{
-            String bucketName = UUID.randomUUID().toString();
             s3Repository.putObjectInBucket(file, bucketName);
             s3Service.parseToHLS(getFileDownloadLink(fileName,bucketName));
-
-
-
             Post post = Post.builder()
                     .content(content)
                     .title(title)
@@ -75,6 +71,8 @@ public class PostService {
 
             return "Post uploaded successfully";
         }catch (Exception e){
+            e.printStackTrace();
+            s3Service.deleteBucket(bucketName);
             return "Error uploading post";
         }
     }
@@ -91,8 +89,8 @@ public class PostService {
         try(FileOutputStream fileOutputStream = new FileOutputStream(file)){
             fileOutputStream.write(multipartFile.getBytes());
         }
+        String bucketName = UUID.randomUUID().toString();
         try{
-            String bucketName = UUID.randomUUID().toString();
             s3Repository.putObjectInBucket(file, bucketName);
             s3Service.parseToHLS(getFileDownloadLink(fileName,bucketName));
 
@@ -107,6 +105,7 @@ public class PostService {
             return "Post uploaded successfully";
         }catch (Exception e){
             e.printStackTrace();
+            s3Repository.deleteBucket(bucketName);
             return "Error uploading post";
         }
     }

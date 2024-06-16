@@ -23,7 +23,7 @@ services:
       - S3_URL=http://172.25.0.10:8000
 
   frontend:
-    image: soulasphyxia/frontend:0.0.1
+    image: soulasphyxia/frontend:0.0.2
     container_name: frontend
     depends_on:
       backend:
