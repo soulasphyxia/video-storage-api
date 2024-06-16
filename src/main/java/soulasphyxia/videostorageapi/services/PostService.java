@@ -56,21 +56,26 @@ public class PostService {
             fileOutputStream.write(multipartFile.getBytes());
         }
 
-        s3Repository.uploadFile(file);
-        String bucketName = UUID.randomUUID().toString();
+        try{
+            String bucketName = UUID.randomUUID().toString();
+            s3Repository.putObjectInBucket(file, bucketName);
+            s3Service.parseToHLS(getFileDownloadLink(fileName,bucketName));
 
-        s3Service.parseToHLS(getFileDownloadLink(fileName,bucketName));
 
-        Post post = Post.builder()
-                .content(content)
-                .title(title)
-                .createdAt(date)
-                .hashTags(hashTags)
-                .mediaFilePath(generateMediaFilePath(bucketName))
-                .build();
-        postRepository.save(post);
 
-        return "Post uploaded successfully";
+            Post post = Post.builder()
+                    .content(content)
+                    .title(title)
+                    .createdAt(date)
+                    .hashTags(hashTags)
+                    .mediaFilePath(generateMediaFilePath(bucketName))
+                    .build();
+            postRepository.save(post);
+
+            return "Post uploaded successfully";
+        }catch (Exception e){
+            return "Error uploading post";
+        }
     }
 
     public String uploadPost(MultipartFile multipartFile,
@@ -85,20 +90,23 @@ public class PostService {
         try(FileOutputStream fileOutputStream = new FileOutputStream(file)){
             fileOutputStream.write(multipartFile.getBytes());
         }
-        String bucketName = UUID.randomUUID().toString();
-        s3Repository.putObjectInBucket(file, bucketName);
-        s3Service.parseToHLS(getFileDownloadLink(fileName,bucketName));
+        try{
+            String bucketName = UUID.randomUUID().toString();
+            s3Repository.putObjectInBucket(file, bucketName);
+            s3Service.parseToHLS(getFileDownloadLink(fileName,bucketName));
 
-        Post post = Post.builder()
-                .content(content)
-                .title(title)
-                .createdAt(date)
-                .mediaFilePath(generateMediaFilePath(bucketName))
-                .build();
-        postRepository.save(post);
+            Post post = Post.builder()
+                    .content(content)
+                    .title(title)
+                    .createdAt(date)
+                    .mediaFilePath(generateMediaFilePath(bucketName))
+                    .build();
+            postRepository.save(post);
 
-        return "Post uploaded successfully";
-
+            return "Post uploaded successfully";
+        }catch (Exception e){
+            return "Error uploading post";
+        }
     }
 
     public Page<Post> getAll(Integer page){

@@ -48,6 +48,7 @@ public class VideoProcessor {
         }
         String tempDir = String.format("/tmp/%s/",bucketName);
         new File(tempDir).mkdir();
+
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(
                 "ffmpeg",

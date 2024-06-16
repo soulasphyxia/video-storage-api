@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/s3")
 @RequiredArgsConstructor
+@CrossOrigin
 public class S3Controller {
 
     private final S3Service s3Service;

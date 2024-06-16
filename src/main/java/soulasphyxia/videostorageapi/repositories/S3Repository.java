@@ -12,6 +12,7 @@ import soulasphyxia.videostorageapi.model.dto.MediaFileDTO;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class S3Repository {
     }
 
     public void putObjectInBucket(File file, String bucketName){
-        client.createBucket(bucketName);
+        createBucketWithCORS(bucketName);
         PutObjectRequest request = new PutObjectRequest(bucketName, file.getName(), file)
                 .withCannedAcl(CannedAccessControlList.PublicRead);
         client.putObject(request);
@@ -103,8 +104,28 @@ public class S3Repository {
     }
 
 
-    public void createBucket(String bucketName){
+    private void createBucketWithCORS(String bucketName){
         client.createBucket(bucketName);
+        List<CORSRule.AllowedMethods> methods = new ArrayList<>();
+        methods.add(CORSRule.AllowedMethods.PUT);
+        methods.add(CORSRule.AllowedMethods.POST);
+        methods.add(CORSRule.AllowedMethods.DELETE);
+        methods.add(CORSRule.AllowedMethods.GET);
+
+        CORSRule rule = new CORSRule().withId("CORSRule")
+                .withAllowedMethods(methods)
+                .withAllowedOrigins(List.of("*"));
+
+        List<CORSRule> rules = new ArrayList<>();
+        rules.add(rule);
+
+        BucketCrossOriginConfiguration configuration = new BucketCrossOriginConfiguration();
+        configuration.setRules(rules);
+
+        client.setBucketCrossOriginConfiguration(bucketName,configuration);
     }
+
+
+
 
 }
