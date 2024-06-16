@@ -35,7 +35,7 @@ public class Post {
     @Column(name="file_path")
     private String mediaFilePath;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "hashtags_in_posts",
             joinColumns = @JoinColumn(name = "post_id"),

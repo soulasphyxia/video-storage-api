@@ -31,12 +31,11 @@ public class S3Service {
         if(matcher.find()){
             bucketName = matcher.group(0);
         }
-        String tempDir = VideoProcessor.mp4ToHls(url);
+        String tempDir = VideoProcessor.mp4Script(url);
         File dir = new File(tempDir);
         List<String> files = Stream.of(dir.listFiles()).filter(file -> !file.isDirectory()).map(File::getName).toList();
         System.out.println(files.size());
         for(String file : files){
-            System.out.println(tempDir+file);
             s3Repository.putObjectInBucket(new File(tempDir+file), bucketName);
         }
         dir.delete();

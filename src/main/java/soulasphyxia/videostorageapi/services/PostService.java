@@ -120,7 +120,7 @@ public class PostService {
 
 
 
-    public Post deletePost(Long id){
+    public String deletePost(Long id){
         Post post = postRepository.findById(id).orElse(null);
         if(post != null){
             Pattern regex = Pattern.compile("(?<=8000\\/)[^\\/]+", Pattern.MULTILINE);
@@ -131,9 +131,9 @@ public class PostService {
             }
             s3Repository.deleteBucket(bucketName);
             postRepository.deleteById(id);
-            return post;
+            return String.format("Post with id %d deleted successfully",id);
         }
-        return null;
+        return "No post with such id";
     }
 
     public Post patchPost(Long id, String title, String content){

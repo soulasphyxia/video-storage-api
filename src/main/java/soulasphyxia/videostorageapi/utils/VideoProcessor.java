@@ -39,6 +39,32 @@ public class VideoProcessor {
         return Integer.parseInt(output.toString().trim());
     }
 
+    public static String mp4Script(String url) throws InterruptedException, IOException {
+        Pattern regex = Pattern.compile("(?<=8000\\/)[^\\/]+", Pattern.MULTILINE);
+        Matcher matcher = regex.matcher(url);
+        String bucketName = "";
+        if(matcher.find()){
+            bucketName = matcher.group(0);
+        }
+        String tempDir = String.format("/tmp/%s/",bucketName);
+        new File(tempDir).mkdir();
+        ProcessBuilder pb = new ProcessBuilder("./ffmpeg_script.sh",url,tempDir);
+        Process process = pb.start();
+        StringBuilder error = new StringBuilder();
+        try(BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getErrorStream())
+        )){
+            String readLine;
+            while((readLine = reader.readLine()) != null){
+                error.append(readLine);
+            }
+        }
+        System.out.println(error);
+        int exitCode = process.waitFor();
+        System.out.printf("Process %d exited with code %d, dir: %s %n",process.pid(), exitCode, tempDir);
+        return tempDir;
+    }
+
     public static String mp4ToHls(String url) throws IOException, InterruptedException {
         Pattern regex = Pattern.compile("(?<=8000\\/)[^\\/]+", Pattern.MULTILINE);
         Matcher matcher = regex.matcher(url);

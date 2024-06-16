@@ -59,11 +59,7 @@ public class DashboardController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id){
-        Post deletedPost = postService.deletePost(id);
-        if(deletedPost != null){
-            return ResponseEntity.ok().body(deletedPost);
-        }
-        return ResponseEntity.ok().body("No post with such id");
+        return ResponseEntity.ok().body(postService.deletePost(id));
     }
 
 }
