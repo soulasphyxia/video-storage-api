@@ -7,10 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import soulasphyxia.videostorageapi.model.HashTag;
 import soulasphyxia.videostorageapi.model.Post;
+import soulasphyxia.videostorageapi.services.HashTagService;
 import soulasphyxia.videostorageapi.services.PostService;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/api/v1/dashboard")
@@ -20,14 +24,22 @@ import java.io.IOException;
 public class DashboardController {
 
     private final PostService postService;
+    private final HashTagService tagService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadPost(@RequestParam("data") MultipartFile file,
                                         @RequestParam("title") String title,
-                                        @RequestParam("content") String content) throws IOException {
+                                        @RequestParam("content") String content,
+                                        @RequestParam(value = "hashtags",required = false) String[] hashTags) throws IOException, InterruptedException {
         if (file != null){
-            String uploadPostResult = postService.uploadPost(file,title,content);
-            return ResponseEntity.ok().body(uploadPostResult);
+            if(hashTags != null){
+                Set<HashTag> hashTagsSet = tagService.getHashTags(hashTags);
+                String uploadPostResult = postService.uploadPostWithTags(file,title,content,hashTagsSet);
+                return ResponseEntity.ok().body(uploadPostResult);
+            }else{
+                String uploadPostResult = postService.uploadPost(file,title,content);
+                return ResponseEntity.ok().body(uploadPostResult);
+            }
         }
 
         return ResponseEntity.ok().body("Something went wrong...");

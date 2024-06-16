@@ -11,6 +11,9 @@ import soulasphyxia.videostorageapi.model.dto.MediaFileDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 @Repository
@@ -24,7 +27,6 @@ public class S3Repository {
 
     public S3Repository(AmazonS3 client) {
         this.client = client;
-        createBucket();
     }
 
     public String uploadFile(File file) {
@@ -36,6 +38,55 @@ public class S3Repository {
         file.delete();
         return String.format("File %s uploaded successfully", file.getName());
 
+    }
+
+    public void putObjectInBucket(File file, String bucketName){
+        client.createBucket(bucketName);
+        PutObjectRequest request = new PutObjectRequest(bucketName, file.getName(), file)
+                .withCannedAcl(CannedAccessControlList.PublicRead);
+        client.putObject(request);
+        file.delete();
+    }
+
+
+    public List<String> bucketObjects(String bucketName){
+        return client
+                .listObjects(bucketName)
+                .getObjectSummaries()
+                .stream()
+                .map(S3ObjectSummary::getKey)
+                .toList();
+    }
+
+    public List<String> getBuckets(){
+        return client
+                .listBuckets()
+                .stream()
+                .map(Bucket::getName)
+                .toList();
+    }
+
+    public String deleteBucket(String bucketName){
+        try{
+            ObjectListing objectListing = client.listObjects(bucketName);
+            while (true) {
+                Iterator<S3ObjectSummary> objIter = objectListing.getObjectSummaries().iterator();
+                while (objIter.hasNext()) {
+                    client.deleteObject(bucketName, objIter.next().getKey());
+                }
+
+                if (objectListing.isTruncated()) {
+                    objectListing = client.listNextBatchOfObjects(objectListing);
+                } else {
+                    break;
+                }
+            }
+            client.deleteBucket(bucketName);
+            return String.format("Bucket %s deleted successfully",bucketName);
+        }catch (Exception e){
+            e.printStackTrace();
+            return String.format("Error deleting bucket %s.",bucketName);
+        }
     }
 
 
@@ -51,8 +102,9 @@ public class S3Repository {
 
     }
 
-    public void createBucket(){
-        client.createBucket(BUCKET_NAME);
+
+    public void createBucket(String bucketName){
+        client.createBucket(bucketName);
     }
 
 }

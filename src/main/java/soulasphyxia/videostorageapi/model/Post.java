@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -33,5 +34,14 @@ public class Post {
 
     @Column(name="file_path")
     private String mediaFilePath;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "hashtags_in_posts",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "hashtag_id")
+    )
+    private Set<HashTag> hashTags;
+
 
 }
