@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import soulasphyxia.videostorageapi.model.HashTag;
@@ -105,12 +106,13 @@ public class PostService {
 
             return "Post uploaded successfully";
         }catch (Exception e){
+            e.printStackTrace();
             return "Error uploading post";
         }
     }
 
     public Page<Post> getAll(Integer page){
-        return postRepository.findAll(PageRequest.of(page,10));
+        return postRepository.findAll(PageRequest.of(page,10, Sort.by("createdAt").descending()));
     }
 
     public Post getById(Long id){
@@ -148,6 +150,7 @@ public class PostService {
 
         return null;
     }
+
 
     private String getFileDownloadLink(String filename, String bucketName){
         return String.format(url +String.format("%s/",bucketName)+ filename);

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soulasphyxia.videostorageapi.model.Post;
+import soulasphyxia.videostorageapi.services.HashTagService;
 import soulasphyxia.videostorageapi.services.PostService;
 
 @RestController
@@ -16,6 +17,7 @@ import soulasphyxia.videostorageapi.services.PostService;
 public class PostsController {
 
     private final PostService postService;
+    private final HashTagService hashTagService;
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id){
         Post post = postService.getById(id);
@@ -30,4 +32,5 @@ public class PostsController {
         Page<Post> posts = postService.getAll(page);
         return ResponseEntity.ok().body(posts);
     }
+
 }
